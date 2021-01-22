@@ -1,16 +1,24 @@
 0.4.19
 ======
 
-- [NEW]: Upgrade to Cython 0.29.7
+- [NEW]: Upgrade to Cython 0.29.20
 
-- [NEW]: Support TA_SetCompatibility
+- [NEW]: from talib import * (imports all func and stream)
+
+- [FIX]: missing method signatures in PyCharm
 
 0.4.18
 ======
 
-- [NEW]: Upgrade to Cython 0.28.1
+- [NEW]: Upgrade to Cython 0.29.17
+
+- [NEW]: Support TA_SetCompatibility
 
 - [NEW]: Reduce size of generated C file and memory requirements to compile it.
+
+- [FIX]: Fixed caching input price series in Abstract API
+
+- [NEW]: Support pandas.Series in Streaming API
 
 0.4.17
 ======

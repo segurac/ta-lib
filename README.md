@@ -33,84 +33,6 @@ Or checkout the sources and run ``setup.py`` yourself:
 $ python setup.py install
 ```
 
-### Troubleshooting
-
-If you get a warning that looks like this:
-
-```
-setup.py:79: UserWarning: Cannot find ta-lib library, installation may fail.
-warnings.warn('Cannot find ta-lib library, installation may fail.')
-```
-
-This typically means ``setup.py`` can't find the underlying ``TA-Lib``
-library, a dependency which needs to be installed.
-
-If you installed the underlying ``TA-Lib`` library with a custom prefix
-(e.g., with ``./configure --prefix=$PREFIX``), then when you go to install
-this python wrapper you can specify additional search paths to find the
-library and include files for the underyling ``TA-Lib`` library using the
-``TA_LIBRARY_PATH`` and ``TA_INCLUDE_PATH`` environment variables:
-
-```sh
-$ export TA_LIBRARY_PATH=$PREFIX/lib
-$ export TA_INCLUDE_PATH=$PREFIX/include
-$ python setup.py install # or pip install ta-lib
-```
-
-Sometimes installation will produce build errors like this:
-
-```
-func.c:256:28: fatal error: ta-lib/ta_libc.h: No such file or directory
-compilation terminated.
-```
-
-or:
-
-```
-common.obj : error LNK2001: unresolved external symbol TA_SetUnstablePeriod
-common.obj : error LNK2001: unresolved external symbol TA_Shutdown
-common.obj : error LNK2001: unresolved external symbol TA_Initialize
-common.obj : error LNK2001: unresolved external symbol TA_GetUnstablePeriod
-common.obj : error LNK2001: unresolved external symbol TA_GetVersionString
-```
-
-This typically means that it can't find the underlying ``TA-Lib`` library, a
-dependency which needs to be installed.  On Windows, this could be caused by
-installing the 32-bit binary distribution of the underlying ``TA-Lib`` library,
-but trying to use it with 64-bit Python.
-
-Sometimes installation will fail with errors like this:
-
-```
-talib/common.c:8:22: fatal error: pyconfig.h: No such file or directory
- #include "pyconfig.h"
-                      ^
-compilation terminated.
-error: command 'x86_64-linux-gnu-gcc' failed with exit status 1
-```
-
-This typically means that you need the Python headers, and should run
-something like:
-
-```
-$ sudo apt-get install python3-dev
-```
-
-Sometimes building the underlying ``TA-Lib`` library has errors running
-``make`` that look like this:
-
-```
-../libtool: line 1717: cd: .libs/libta_lib.lax/libta_abstract.a: No such file or directory
-make[2]: *** [libta_lib.la] Error 1
-make[1]: *** [all-recursive] Error 1
-make: *** [all-recursive] Error 1
-```
-
-This might mean that the directory path to the underlying ``TA-Lib`` library
-has spaces in the directory names.  Try putting it in a path that does not have
-any spaces and trying again.
-
-
 ### Dependencies
 
 To use TA-Lib for python, you need to have the
@@ -163,6 +85,119 @@ $ sudo make install
 
 > If you build ``TA-Lib`` using ``make -jX`` it will fail but that's OK!
 > Simply rerun ``make -jX`` followed by ``[sudo] make install``.
+
+
+### Troubleshooting
+
+If you get a warning that looks like this:
+
+```
+setup.py:79: UserWarning: Cannot find ta-lib library, installation may fail.
+warnings.warn('Cannot find ta-lib library, installation may fail.')
+```
+
+This typically means ``setup.py`` can't find the underlying ``TA-Lib``
+library, a dependency which needs to be installed.
+
+If you installed the underlying ``TA-Lib`` library with a custom prefix
+(e.g., with ``./configure --prefix=$PREFIX``), then when you go to install
+this python wrapper you can specify additional search paths to find the
+library and include files for the underlying ``TA-Lib`` library using the
+``TA_LIBRARY_PATH`` and ``TA_INCLUDE_PATH`` environment variables:
+
+```sh
+$ export TA_LIBRARY_PATH=$PREFIX/lib
+$ export TA_INCLUDE_PATH=$PREFIX/include
+$ python setup.py install # or pip install ta-lib
+```
+
+Sometimes installation will produce build errors like this:
+
+```
+talib/_ta_lib.c:601:10: fatal error: ta-lib/ta_defs.h: No such file or directory
+  601 | #include "ta-lib/ta_defs.h"
+      |          ^~~~~~~~~~~~~~~~~~
+compilation terminated.
+```
+
+or:
+
+```
+common.obj : error LNK2001: unresolved external symbol TA_SetUnstablePeriod
+common.obj : error LNK2001: unresolved external symbol TA_Shutdown
+common.obj : error LNK2001: unresolved external symbol TA_Initialize
+common.obj : error LNK2001: unresolved external symbol TA_GetUnstablePeriod
+common.obj : error LNK2001: unresolved external symbol TA_GetVersionString
+```
+
+This typically means that it can't find the underlying ``TA-Lib`` library, a
+dependency which needs to be installed.  On Windows, this could be caused by
+installing the 32-bit binary distribution of the underlying ``TA-Lib`` library,
+but trying to use it with 64-bit Python.
+
+Sometimes installation will fail with errors like this:
+
+```
+talib/common.c:8:22: fatal error: pyconfig.h: No such file or directory
+ #include "pyconfig.h"
+                      ^
+compilation terminated.
+error: command 'x86_64-linux-gnu-gcc' failed with exit status 1
+```
+
+This typically means that you need the Python headers, and should run
+something like:
+
+```
+$ sudo apt-get install python3-dev
+```
+
+Sometimes building the underlying ``TA-Lib`` library has errors running
+``make`` that look like this:
+
+```
+../libtool: line 1717: cd: .libs/libta_lib.lax/libta_abstract.a: No such file or directory
+make[2]: *** [libta_lib.la] Error 1
+make[1]: *** [all-recursive] Error 1
+make: *** [all-recursive] Error 1
+```
+
+This might mean that the directory path to the underlying ``TA-Lib`` library
+has spaces in the directory names.  Try putting it in a path that does not have
+any spaces and trying again.
+
+Sometimes you might get this error running ``setup.py``:
+
+```
+/usr/include/limits.h:26:10: fatal error: bits/libc-header-start.h: No such file or directory
+#include <bits/libc-header-start.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+
+This is likely an issue with trying to compile for 32-bit platform but
+without the appropriate headers.  You might find some success looking at the
+first answer to [this question](https://stackoverflow.com/questions/54082459/fatal-error-bits-libc-header-start-h-no-such-file-or-directory-while-compili).
+
+If you wonder why ``STOCHRSI`` gives you different results than you expect,
+probably you want ``STOCH`` applied to ``RSI``, which is a little different
+than the ``STOCHRSI`` which is ``STOCHF`` applied to ``RSI``:
+
+```python
+>>> import talib
+>>> import numpy
+>>> c = numpy.random.randn(100)
+
+# this is the library function
+>>> k, d = talib.STOCHRSI(c)
+
+# this produces the same result, calling STOCHF
+>>> rsi = talib.RSI(c)
+>>> k, d = talib.STOCHF(rsi, rsi, rsi)
+
+# you might want this instead, calling STOCH
+>>> rsi = talib.RSI(c)
+>>> k, d = talib.STOCH(rsi, rsi, rsi)
+```
 
 ## Function API
 
@@ -262,6 +297,29 @@ slowk, slowd = STOCH(inputs, 5, 3, 0, 3, 0) # uses high, low, close by default
 
 # uses high, low, open instead
 slowk, slowd = STOCH(inputs, 5, 3, 0, 3, 0, prices=['high', 'low', 'open'])
+```
+
+## Streaming API
+
+An experimental Streaming API was added that allows users to compute the latest
+value of an indicator.  This can be faster than using the Function API, for
+example in an application that receives streaming data, and wants to know just
+the most recent updated indicator value.
+
+```python
+import talib
+from talib import stream
+
+close = np.random.random(100)
+
+# the Function API
+output = talib.SMA(close)
+
+# the Streaming API
+latest = stream.SMA(close)
+
+# the latest value is the same as the last output value
+assert (output[-1] - latest) < 0.00001
 ```
 
 ## Supported Indicators and Functions
